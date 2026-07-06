@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IRISIA — Pas un catalogue de visages. Une vraie rencontre.</title>
+<meta name="description" content="Irisia, votre entremetteuse IA, apprend à vous connaître dès l'inscription et ne vous présente que des personnes vérifiées, choisies pour vous. Rejoignez la liste d'attente." />
+
+<!--
+  IRISIA — Landing page v1 (liste d'attente)
+  ────────────────────────────────────────────
+  POUR ACTIVER LE FORMULAIRE :
+  1. Crée un compte gratuit sur https://formspree.io
+  2. Crée un formulaire, copie son endpoint (ex: https://formspree.io/f/abcdwxyz)
+  3. Remplace la valeur de FORM_ENDPOINT tout en bas de ce fichier, dans le <script>.
+  (À l'étape suivante du projet, on remplacera Formspree par notre propre API.)
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,560;1,9..144,400&family=Karla:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --nuit:        #251D38;  /* fond — encre d'iris */
+    --nuit-2:      #2E2549;  /* surfaces relevées   */
+    --nuit-3:      #382D59;  /* bordures, lignes    */
+    --petale:      #EFEAF6;  /* texte principal     */
+    --brume:       #A79BC6;  /* texte secondaire    */
+    --iris:        #8F79EA;  /* accent violet       */
+    --iris-fonce:  #6C55C9;
+    --lueur:       #D8B45C;  /* or de bougie — réservé au rituel du jeudi */
+    --papier:      #F4EFE7;  /* la lettre d'Irisia    */
+    --encre:       #2A2138;  /* texte sur papier    */
+    --max: 1080px;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--nuit);
+    color:var(--petale);
+    font-family:'Karla', system-ui, sans-serif;
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--iris); color:#fff; }
+
+  a{ color:var(--iris); text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 24px; }
+
+  /* ── En-tête ─────────────────────────────── */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:28px 0;
+  }
+  .marque{
+    display:flex; align-items:center; gap:12px;
+    font-family:'Fraunces', serif; font-weight:560;
+    font-size:1.35rem; letter-spacing:.14em; color:var(--petale);
+  }
+  .marque:hover{ text-decoration:none; }
+  .marque svg{ display:block; }
+  .header-cta{
+    font-weight:700; font-size:.92rem;
+    color:var(--nuit); background:var(--petale);
+    padding:10px 20px; border-radius:999px;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .header-cta:hover{ background:#fff; transform:translateY(-1px); text-decoration:none; }
+
+  /* ── Héros ───────────────────────────────── */
+  .hero{ padding:72px 0 56px; text-align:left; position:relative; }
+  .eyebrow{
+    font-size:.8rem; font-weight:700; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--brume); margin-bottom:22px;
+  }
+  h1{
+    font-family:'Fraunces', serif; font-weight:400;
+    font-size:clamp(2.5rem, 6vw, 4.4rem);
+    line-height:1.08; letter-spacing:-.01em;
+    max-width:15ch;
+  }
+  h1 em{ font-style:italic; color:var(--iris); }
+  .hero p.sous{
+    margin-top:26px; max-width:52ch;
+    font-size:1.12rem; color:var(--brume);
+  }
+  .hero p.sous strong{ color:var(--petale); font-weight:500; }
+
+  /* ── Formulaire liste d'attente ──────────── */
+  .attente{ margin-top:36px; max-width:520px; }
+  .attente form{
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .attente input[type="email"]{
+    flex:1 1 260px;
+    background:var(--nuit-2); color:var(--petale);
+    border:1px solid var(--nuit-3); border-radius:14px;
+    padding:15px 18px; font:inherit; font-size:1rem;
+    transition:border-color .15s ease;
+  }
+  .attente input::placeholder{ color:var(--brume); }
+  .attente input:focus{ outline:2px solid var(--iris); outline-offset:2px; border-color:var(--iris); }
+  .attente button{
+    flex:0 0 auto;
+    background:var(--iris); color:#fff;
+    border:none; border-radius:14px; cursor:pointer;
+    padding:15px 26px; font:inherit; font-weight:700; font-size:1rem;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .attente button:hover{ background:var(--iris-fonce); transform:translateY(-1px); }
+  .attente button:focus-visible{ outline:2px solid var(--petale); outline-offset:2px; }
+  .attente .note{ margin-top:12px; font-size:.86rem; color:var(--brume); }
+  .attente .retour{ margin-top:12px; font-size:.95rem; display:none; }
+  .attente .retour.ok{ color:#9BE0B0; display:block; }
+  .attente .retour.erreur{ color:#F0A9A9; display:block; }
+
+  /* ── Sections ────────────────────────────── */
+  section{ padding:88px 0; }
+  h2{
+    font-family:'Fraunces', serif; font-weight:400;
+    font-size:clamp(1.8rem, 3.6vw, 2.6rem); line-height:1.15;
+    max-width:22ch;
+  }
+  .intro-section{ color:var(--brume); max-width:56ch; margin-top:16px; }
+
+  /* Étapes — une vraie séquence, donc numérotée */
+  .etapes{ margin-top:56px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+  .etape{
+    background:var(--nuit-2); border:1px solid var(--nuit-3);
+    border-radius:20px; padding:30px 26px;
+  }
+  .etape .num{
+    font-family:'Fraunces', serif; font-style:italic;
+    color:var(--iris); font-size:1.1rem; margin-bottom:14px;
+  }
+  .etape h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.28rem; margin-bottom:10px; }
+  .etape p{ color:var(--brume); font-size:.98rem; }
+  .etape p strong{ color:var(--petale); font-weight:500; }
+
+  /* ── La lettre d'Irisia ────────────────────── */
+  .lettre-fond{ background:var(--nuit-2); }
+  .lettre{
+    background:var(--papier); color:var(--encre);
+    border-radius:4px; max-width:640px; margin:0 auto;
+    padding:56px 52px;
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+    font-family:'Fraunces', serif;
+  }
+  .lettre .de{ font-size:.8rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; font-family:'Karla'; color:#8A7FA0; margin-bottom:26px; }
+  .lettre p{ font-style:italic; font-size:1.22rem; line-height:1.75; }
+  .lettre p + p{ margin-top:20px; }
+  .lettre .signature{ margin-top:34px; font-size:1.6rem; font-style:italic; color:var(--iris-fonce); }
+
+  /* ── Confiance ───────────────────────────── */
+  .confiance-grille{ margin-top:52px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+  .gage h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.22rem; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+  .gage h3::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--iris); flex:0 0 auto; }
+  .gage p{ color:var(--brume); font-size:.97rem; }
+
+  /* ── Appel final ─────────────────────────── */
+  .final{ text-align:center; }
+  .final h2{ margin:0 auto; }
+  .final .attente{ margin:36px auto 0; }
+  .final .attente form{ justify-content:center; }
+
+  footer{
+    border-top:1px solid var(--nuit-3);
+    padding:36px 0 48px;
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    color:var(--brume); font-size:.88rem;
+  }
+
+  /* ── Apparition douce au défilement ──────── */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.vu{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .header-cta, .attente button{ transition:none; }
+  }
+
+  /* ── Mobile ──────────────────────────────── */
+  @media (max-width: 820px){
+    .etapes, .confiance-grille{ grid-template-columns:1fr; }
+    .lettre{ padding:40px 28px; }
+    section{ padding:64px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="marque" href="#" aria-label="IRISIA — accueil">
+      <!-- Marque : un iris stylisé, l'œil et la fleur -->
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+        <ellipse cx="15" cy="15" rx="13" ry="8.2" stroke="#8F79EA" stroke-width="1.6"/>
+        <circle cx="15" cy="15" r="4.6" stroke="#D8B45C" stroke-width="1.6"/>
+        <circle cx="15" cy="15" r="1.5" fill="#EFEAF6"/>
+      </svg>
+      IRISIA
+    </a>
+    <a class="header-cta" href="#attente">Rejoindre la liste</a>
+  </header>
+
+  <!-- ═════════ HÉROS ═════════ -->
+  <div class="hero">
+    <p class="eyebrow">L'entremetteuse — bêta privée</p>
+    <h1>Pas un catalogue de visages. <em>Une vraie rencontre.</em></h1>
+    <p class="sous">
+      Pas de swipe. Pas de faux profils. <strong>Irisia</strong>, votre entremetteuse IA,
+      apprend à vous connaître dès l'inscription au fil d'une vraie conversation,
+      puis ne vous présente que des personnes <strong>vérifiées et choisies pour vous</strong>.
+    </p>
+
+    <div class="attente" id="attente">
+      <form data-form-attente novalidate>
+        <label for="email-hero" class="sr-only" style="position:absolute;left:-9999px;">Votre adresse e-mail</label>
+        <input id="email-hero" type="email" name="email" placeholder="votre@email.fr" required autocomplete="email" />
+        <button type="submit">Rejoindre la liste d'attente</button>
+      </form>
+      <p class="note">Bêta privée, places limitées. Aucune publicité, jamais&nbsp;— désinscription en un clic.</p>
+      <p class="retour" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <!-- ═════════ COMMENT ÇA MARCHE ═════════ -->
+  <section id="comment">
+    <h2 class="reveal">Trois pas vers une vraie rencontre</h2>
+    <p class="intro-section reveal">Un parcours pensé pour la qualité, pas pour le volume. Chaque étape existe pour une seule raison&nbsp;: que la personne en face de vous en vaille la peine.</p>
+    <div class="etapes">
+      <article class="etape reveal">
+        <p class="num">Premier pas</p>
+        <h3>Prouvez que vous êtes vous</h3>
+        <p>Pièce d'identité et selfie vidéo à l'inscription. <strong>100&nbsp;% des membres sont vérifiés</strong>&nbsp;: pas de faux profils, pas de bots, pas de mauvaises surprises.</p>
+      </article>
+      <article class="etape reveal">
+        <p class="num">Deuxième pas</p>
+        <h3>Conversez avec Irisia</h3>
+        <p>Vingt minutes d'une vraie conversation&nbsp;— pas un questionnaire à cases. Vos valeurs, votre rythme de vie, ce que vous cherchez vraiment. <strong>Irisia écoute, comprend, retient.</strong></p>
+      </article>
+      <article class="etape reveal">
+        <p class="num">Troisième pas</p>
+        <h3>Recevez vos présentations</h3>
+        <p>Quand Irisia trouve quelqu'un qui vous correspond vraiment, elle vous le présente&nbsp;— et <strong>vous explique pourquoi</strong>. Si le courant ne passe pas, dites-le-lui&nbsp;: elle affinera la prochaine présentation.</p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<!-- ═════════ LA LETTRE D'IRIS ═════════ -->
+<div class="lettre-fond">
+  <div class="wrap">
+    <section>
+      <div class="lettre reveal">
+        <p class="de">Un mot d'Irisia</p>
+        <p>Bonsoir. Je m'appelle Irisia.</p>
+        <p>Je ne vous montrerai jamais un catalogue de visages. Je ne vous demanderai jamais de juger quelqu'un en une seconde. Ce n'est pas ainsi que naissent les histoires qui durent.</p>
+        <p>Nous allons d'abord parler, vous et moi. Puis, quand j'aurai trouvé quelqu'un qui vous correspond vraiment, je vous le présenterai&nbsp;— et je vous dirai pourquoi je crois en vous deux.</p>
+        <p class="signature">Irisia</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- ═════════ CONFIANCE ═════════ -->
+  <section id="confiance">
+    <h2 class="reveal">La confiance n'est pas une option</h2>
+    <div class="confiance-grille">
+      <div class="gage reveal">
+        <h3>Identité vérifiée</h3>
+        <p>Chaque membre passe une vérification d'identité et un selfie vidéo avant de rencontrer qui que ce soit. Sans exception.</p>
+      </div>
+      <div class="gage reveal">
+        <h3>Vos données en Europe</h3>
+        <p>Hébergement en Union européenne, conformité RGPD, suppression de compte en un clic. Vos conversations avec Irisia ne sont jamais vendues, à personne.</p>
+      </div>
+      <div class="gage reveal">
+        <h3>Jamais de publicité</h3>
+        <p>Notre modèle est simple&nbsp;: un service que l'on choisit de payer, pas une attention que l'on revend. Votre temps sur IRISIA se compte en minutes, pas en heures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ APPEL FINAL ═════════ -->
+  <section class="final">
+    <h2 class="reveal">Votre prochaine rencontre pourrait être la bonne.</h2>
+    <div class="attente reveal">
+      <form data-form-attente novalidate>
+        <label for="email-final" style="position:absolute;left:-9999px;">Votre adresse e-mail</label>
+        <input id="email-final" type="email" name="email" placeholder="votre@email.fr" required autocomplete="email" />
+        <button type="submit">Rejoindre la liste d'attente</button>
+      </form>
+      <p class="retour" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 IRISIA — fait avec soin, en France.</span>
+    <span><a href="#">Confidentialité</a> · <a href="#">Mentions légales</a> · <a href="#">Contact</a></span>
+  </footer>
+</div>
+
+<script>
+  /* ══════════════════════════════════════════
+     1. FORMULAIRE LISTE D'ATTENTE
+     Remplace FORM_ENDPOINT par ton endpoint Formspree
+     (voir instructions en haut du fichier).
+  ══════════════════════════════════════════ */
+  const FORM_ENDPOINT = "https://formspree.io/f/VOTRE_ID";
+
+  document.querySelectorAll("[data-form-attente]").forEach(form => {
+    const retour = form.parentElement.querySelector(".retour");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = form.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        retour.textContent = "Cette adresse e-mail semble incomplète — vérifiez-la et réessayez.";
+        retour.className = "retour erreur";
+        return;
+      }
+      const bouton = form.querySelector("button");
+      bouton.disabled = true; bouton.textContent = "Un instant…";
+      try {
+        const rep = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: { "Accept": "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        if (!rep.ok) throw new Error();
+        form.reset();
+        retour.textContent = "C'est noté. Irisia vous écrira dès l'ouverture de la bêta.";
+        retour.className = "retour ok";
+      } catch {
+        retour.textContent = "L'inscription n'a pas abouti — réessayez dans un instant.";
+        retour.className = "retour erreur";
+      } finally {
+        bouton.disabled = false; bouton.textContent = "Rejoindre la liste d'attente";
+      }
+    });
+  });
+
+  /* ══════════════════════════════════════════
+     2. APPARITION AU DÉFILEMENT (respecte
+        prefers-reduced-motion via le CSS)
+  ══════════════════════════════════════════ */
+  const obs = new IntersectionObserver(entrees => {
+    entrees.forEach(en => { if (en.isIntersecting){ en.target.classList.add("vu"); obs.unobserve(en.target); } });
+  }, { threshold: .15 });
+  document.querySelectorAll(".reveal").forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
