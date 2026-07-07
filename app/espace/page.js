@@ -71,18 +71,23 @@ export default async function Espace() {
             </span>
           </div>
 
-          <div className="jalon">
-            <span className="pastille">3</span>
+          <div className={"jalon" + (utilisateur.entretien_termine ? " fait" : "")}>
+            <span className="pastille">{utilisateur.entretien_termine ? "✓" : "3"}</span>
             <div>
               <h3>Votre entretien avec Irisia</h3>
               <p>
                 {utilisateur.entretien_termine
                   ? "Entretien terminé. Irisia vous connaît — elle cherche pour vous."
-                  : "Vingt minutes de conversation pour qu'Irisia apprenne qui vous êtes. Ouverture très prochainement."}
+                  : "Une quinzaine de minutes de conversation pour qu'Irisia apprenne qui vous êtes. Elle vous attend."}
               </p>
+              {!utilisateur.entretien_termine && (
+                <p style={{ marginTop: "14px" }}>
+                  <Link className="bouton" href="/entretien">Commencer l'entretien</Link>
+                </p>
+              )}
             </div>
-            <span className={"etat " + (utilisateur.entretien_termine ? "ok" : "bientot")}>
-              {utilisateur.entretien_termine ? "Fait" : "Bientôt"}
+            <span className={"etat " + (utilisateur.entretien_termine ? "ok" : "attente")}>
+              {utilisateur.entretien_termine ? "Fait" : "À faire"}
             </span>
           </div>
         </div>
