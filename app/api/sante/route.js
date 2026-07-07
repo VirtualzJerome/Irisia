@@ -1,4 +1,3 @@
-// IRISIA — Diagnostic v2 (/api/sante). À retirer après la bêta.
 import { NextResponse } from "next/server";
 import { Pool } from "pg";
 
@@ -15,8 +14,6 @@ export async function GET() {
   } else {
     rapport.DATABASE_URL = "présente — détail ci-dessous";
   }
-
-  // Ce que l'application voit VRAIMENT (sans le mot de passe)
   try {
     const u = new URL(url.replace(/^postgres(ql)?:\/\//, "http://"));
     rapport.hote_configure = u.hostname || "(vide)";
