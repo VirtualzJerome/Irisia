@@ -1,0 +1,312 @@
+/* ═════════════════════════════════════════════
+   IRISIA — Design system global
+   Palette « violet nuit » : l'iris, la fleur et l'œil
+   ═════════════════════════════════════════════ */
+:root{
+  --nuit:        #251D38;
+  --nuit-2:      #2E2549;
+  --nuit-3:      #382D59;
+  --petale:      #EFEAF6;
+  --brume:       #A79BC6;
+  --iris:        #8F79EA;
+  --iris-fonce:  #6C55C9;
+  --lueur:       #D8B45C;
+  --papier:      #F4EFE7;
+  --encre:       #2A2138;
+  --ok:          #9BE0B0;
+  --erreur:      #F0A9A9;
+  --max: 1080px;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
+body{
+  background:var(--nuit);
+  color:var(--petale);
+  font-family:'Karla', system-ui, sans-serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{ background:var(--iris); color:#fff; }
+
+a{ color:var(--iris); text-decoration:none; }
+a:hover{ text-decoration:underline; }
+
+.wrap{ max-width:var(--max); margin:0 auto; padding:0 24px; }
+
+/* ── En-tête ─────────────────────────────── */
+header.site{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:28px 0;
+}
+.marque{
+  display:flex; align-items:center; gap:12px;
+  font-family:'Fraunces', serif; font-weight:560;
+  font-size:1.35rem; letter-spacing:.14em; color:var(--petale);
+}
+.marque:hover{ text-decoration:none; }
+.nav-droite{ display:flex; align-items:center; gap:22px; }
+.lien-nav{ color:var(--brume); font-weight:500; font-size:.95rem; }
+.lien-nav:hover{ color:var(--petale); text-decoration:none; }
+.bouton-clair{
+  font-weight:700; font-size:.92rem;
+  color:var(--nuit); background:var(--petale);
+  padding:10px 20px; border-radius:999px;
+  transition:transform .15s ease, background .15s ease;
+  border:none; cursor:pointer; display:inline-block;
+}
+.bouton-clair:hover{ background:#fff; transform:translateY(-1px); text-decoration:none; }
+
+/* ── Boutons principaux ──────────────────── */
+.bouton{
+  background:var(--iris); color:#fff;
+  border:none; border-radius:14px; cursor:pointer;
+  padding:15px 26px; font:inherit; font-weight:700; font-size:1rem;
+  transition:background .15s ease, transform .15s ease;
+  display:inline-block; text-align:center;
+}
+.bouton:hover{ background:var(--iris-fonce); transform:translateY(-1px); text-decoration:none; }
+.bouton:focus-visible{ outline:2px solid var(--petale); outline-offset:2px; }
+.bouton:disabled{ opacity:.6; cursor:wait; transform:none; }
+.bouton.large{ width:100%; }
+
+.lien-discret{
+  background:none; border:none; cursor:pointer;
+  color:var(--brume); font:inherit; font-size:.92rem;
+}
+.lien-discret:hover{ color:var(--petale); text-decoration:underline; }
+
+/* ── Héros (accueil) ─────────────────────── */
+.hero{ padding:72px 0 88px; }
+.eyebrow{
+  font-size:.8rem; font-weight:700; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--brume); margin-bottom:22px;
+}
+h1{
+  font-family:'Fraunces', serif; font-weight:400;
+  font-size:clamp(2.5rem, 6vw, 4.4rem);
+  line-height:1.08; letter-spacing:-.01em;
+  max-width:15ch;
+}
+h1 em{ font-style:italic; color:var(--iris); }
+.hero .sous{
+  margin-top:26px; max-width:52ch;
+  font-size:1.12rem; color:var(--brume);
+}
+.hero .sous strong{ color:var(--petale); font-weight:500; }
+.hero .actions{ margin-top:36px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+.hero .note{ margin-top:14px; font-size:.86rem; color:var(--brume); }
+
+/* ── Sections d'accueil ──────────────────── */
+section.bloc{ padding:88px 0; }
+h2{
+  font-family:'Fraunces', serif; font-weight:400;
+  font-size:clamp(1.8rem, 3.6vw, 2.6rem); line-height:1.15;
+  max-width:22ch;
+}
+.intro-section{ color:var(--brume); max-width:56ch; margin-top:16px; }
+
+.etapes{ margin-top:56px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+.etape{
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-radius:20px; padding:30px 26px;
+}
+.etape .num{
+  font-family:'Fraunces', serif; font-style:italic;
+  color:var(--iris); font-size:1.1rem; margin-bottom:14px;
+}
+.etape h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.28rem; margin-bottom:10px; }
+.etape p{ color:var(--brume); font-size:.98rem; }
+.etape p strong{ color:var(--petale); font-weight:500; }
+
+/* ── La lettre d'Irisia ──────────────────── */
+.lettre-fond{ background:var(--nuit-2); }
+.lettre{
+  background:var(--papier); color:var(--encre);
+  border-radius:4px; max-width:640px; margin:0 auto;
+  padding:56px 52px;
+  box-shadow:0 30px 60px rgba(0,0,0,.35);
+  font-family:'Fraunces', serif;
+}
+.lettre .de{ font-size:.8rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; font-family:'Karla'; color:#8A7FA0; margin-bottom:26px; }
+.lettre p{ font-style:italic; font-size:1.22rem; line-height:1.75; }
+.lettre p + p{ margin-top:20px; }
+.lettre .signature{ margin-top:34px; font-size:1.6rem; font-style:italic; color:var(--iris-fonce); }
+
+/* ── Confiance ───────────────────────────── */
+.confiance-grille{ margin-top:52px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
+.gage h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.22rem; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+.gage h3::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--iris); flex:0 0 auto; }
+.gage p{ color:var(--brume); font-size:.97rem; }
+
+.final{ text-align:center; }
+.final h2{ margin:0 auto; }
+.final .actions{ margin-top:36px; }
+
+footer.site{
+  border-top:1px solid var(--nuit-3);
+  padding:36px 0 48px;
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  color:var(--brume); font-size:.88rem;
+}
+
+/* ── Cartes formulaires (inscription / connexion) ── */
+.page-auth{
+  min-height:calc(100vh - 110px);
+  display:flex; align-items:flex-start; justify-content:center;
+  padding:40px 24px 80px;
+}
+.carte-auth{
+  width:100%; max-width:460px;
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-radius:22px; padding:38px 34px;
+}
+.carte-auth h1{
+  font-size:1.9rem; max-width:none; margin-bottom:8px;
+}
+.carte-auth .sous-titre{ color:var(--brume); font-size:.98rem; margin-bottom:28px; }
+
+.champ{ margin-bottom:18px; }
+.champ label{
+  display:block; font-weight:700; font-size:.88rem;
+  margin-bottom:7px; color:var(--petale);
+}
+.champ input, .champ select{
+  width:100%;
+  background:var(--nuit); color:var(--petale);
+  border:1px solid var(--nuit-3); border-radius:12px;
+  padding:13px 15px; font:inherit; font-size:1rem;
+  transition:border-color .15s ease;
+}
+.champ input::placeholder{ color:var(--brume); }
+.champ input:focus, .champ select:focus{ outline:2px solid var(--iris); outline-offset:2px; border-color:var(--iris); }
+.champ .aide{ font-size:.82rem; color:var(--brume); margin-top:6px; }
+
+.champ-consentement{
+  display:flex; gap:10px; align-items:flex-start;
+  margin:22px 0; font-size:.9rem; color:var(--brume);
+}
+.champ-consentement input{ margin-top:4px; accent-color:var(--iris); width:16px; height:16px; flex:0 0 auto; }
+
+.message-erreur{
+  background:rgba(240,169,169,.1); border:1px solid rgba(240,169,169,.35);
+  color:var(--erreur); border-radius:12px;
+  padding:12px 15px; font-size:.93rem; margin-bottom:18px;
+}
+.bascule-auth{ text-align:center; margin-top:22px; font-size:.93rem; color:var(--brume); }
+
+/* ── Espace membre ───────────────────────── */
+.espace{ padding:40px 0 90px; }
+.espace .bienvenue{ margin-bottom:8px; }
+.espace .sous-bienvenue{ color:var(--brume); max-width:58ch; margin-bottom:44px; }
+
+.parcours{ display:grid; gap:18px; max-width:720px; }
+.jalon{
+  display:flex; gap:18px; align-items:flex-start;
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-radius:18px; padding:24px 24px;
+}
+.jalon .pastille{
+  width:34px; height:34px; flex:0 0 auto; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:.95rem;
+  background:var(--nuit-3); color:var(--brume);
+  border:1px solid var(--nuit-3);
+}
+.jalon.fait .pastille{ background:var(--iris); color:#fff; border-color:var(--iris); }
+.jalon h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.15rem; }
+.jalon p{ color:var(--brume); font-size:.95rem; margin-top:4px; }
+.jalon .etat{
+  margin-left:auto; flex:0 0 auto; align-self:center;
+  font-size:.78rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  padding:6px 12px; border-radius:999px;
+}
+.etat.ok{ background:rgba(155,224,176,.12); color:var(--ok); }
+.etat.attente{ background:rgba(216,180,92,.12); color:var(--lueur); }
+.etat.bientot{ background:var(--nuit-3); color:var(--brume); }
+
+/* ── Pages légales ───────────────────────── */
+.page-legale{ max-width:680px; margin:0 auto; padding:70px 24px 90px; }
+.page-legale h1{ font-size:2.1rem; margin-bottom:26px; max-width:none; }
+.page-legale p{ color:var(--brume); margin-bottom:16px; }
+
+/* ── Accessibilité & mobile ──────────────── */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .bouton, .bouton-clair{ transition:none; }
+}
+@media (max-width: 820px){
+  .etapes, .confiance-grille{ grid-template-columns:1fr; }
+  .lettre{ padding:40px 28px; }
+  section.bloc{ padding:64px 0; }
+  .carte-auth{ padding:30px 22px; }
+  .jalon .etat{ display:none; }
+}
+
+/* ── L'entretien avec Irisia (chat) ──────── */
+.chat-page{
+  height:100dvh; display:flex; flex-direction:column;
+  max-width:820px; margin:0 auto; padding:0 16px;
+}
+.chat-entete{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:18px 4px; border-bottom:1px solid var(--nuit-3);
+}
+.chat-entete .marque{ font-size:1.05rem; gap:9px; }
+.chat-statut{
+  font-family:'Fraunces', serif; font-style:italic;
+  color:var(--brume); font-size:.95rem; text-align:center; flex:1;
+}
+.chat-fil{
+  flex:1; overflow-y:auto; padding:26px 4px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.chat-info{ color:var(--brume); text-align:center; font-style:italic; }
+.bulle{
+  max-width:78%; padding:14px 18px; border-radius:18px;
+  font-size:1rem; line-height:1.6;
+}
+.bulle p{ margin:0; }
+.bulle p + p{ margin-top:8px; }
+.bulle-nom{
+  display:block; font-family:'Fraunces', serif; font-style:italic;
+  color:var(--iris); font-size:.85rem; margin-bottom:5px;
+}
+.bulle.irisia{
+  align-self:flex-start;
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-bottom-left-radius:6px;
+}
+.bulle.moi{
+  align-self:flex-end;
+  background:var(--iris); color:#fff;
+  border-bottom-right-radius:6px;
+}
+.ecrit span{ animation:clignote 1.2s infinite; }
+.ecrit span:nth-child(2){ animation-delay:.2s; }
+.ecrit span:nth-child(3){ animation-delay:.4s; }
+@keyframes clignote{ 0%,100%{opacity:.2} 50%{opacity:1} }
+@media (prefers-reduced-motion: reduce){ .ecrit span{ animation:none; } }
+
+.chat-fin{
+  align-self:center; text-align:center; max-width:480px;
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-radius:18px; padding:26px; margin-top:10px;
+}
+.chat-fin p{ color:var(--brume); margin-bottom:18px; }
+
+.chat-saisie{
+  display:flex; gap:10px; padding:14px 4px 20px;
+  border-top:1px solid var(--nuit-3);
+}
+.chat-saisie input{
+  flex:1;
+  background:var(--nuit-2); color:var(--petale);
+  border:1px solid var(--nuit-3); border-radius:14px;
+  padding:14px 16px; font:inherit; font-size:1rem;
+}
+.chat-saisie input:focus{ outline:2px solid var(--iris); outline-offset:2px; }
+.chat-saisie input::placeholder{ color:var(--brume); }

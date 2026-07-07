@@ -1,247 +1,65 @@
-/* ═════════════════════════════════════════════
-   IRISIA — Design system global
-   Palette « violet nuit » : l'iris, la fleur et l'œil
-   ═════════════════════════════════════════════ */
-:root{
-  --nuit:        #251D38;
-  --nuit-2:      #2E2549;
-  --nuit-3:      #382D59;
-  --petale:      #EFEAF6;
-  --brume:       #A79BC6;
-  --iris:        #8F79EA;
-  --iris-fonce:  #6C55C9;
-  --lueur:       #D8B45C;
-  --papier:      #F4EFE7;
-  --encre:       #2A2138;
-  --ok:          #9BE0B0;
-  --erreur:      #F0A9A9;
-  --max: 1080px;
-}
+"use client";
 
-*{ margin:0; padding:0; box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-body{
-  background:var(--nuit);
-  color:var(--petale);
-  font-family:'Karla', system-ui, sans-serif;
-  font-size:17px;
-  line-height:1.65;
-  -webkit-font-smoothing:antialiased;
-}
+export default function Connexion() {
+  const router = useRouter();
+  const [erreur, setErreur] = useState("");
+  const [enCours, setEnCours] = useState(false);
 
-::selection{ background:var(--iris); color:#fff; }
+  async function envoyer(e) {
+    e.preventDefault();
+    setErreur("");
+    setEnCours(true);
+    const f = e.target;
+    try {
+      const rep = await fetch("/api/connexion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: f.email.value, motDePasse: f.motDePasse.value }),
+      });
+      const json = await rep.json();
+      if (!rep.ok) {
+        setErreur(json.erreur || "Une erreur est survenue.");
+        setEnCours(false);
+        return;
+      }
+      router.push("/espace");
+      router.refresh();
+    } catch {
+      setErreur("Connexion impossible. Vérifiez votre réseau et réessayez.");
+      setEnCours(false);
+    }
+  }
 
-a{ color:var(--iris); text-decoration:none; }
-a:hover{ text-decoration:underline; }
+  return (
+    <main className="page-auth">
+      <div className="carte-auth">
+        <h1>Bon retour.</h1>
+        <p className="sous-titre">Irisia vous a gardé votre place.</p>
 
-.wrap{ max-width:var(--max); margin:0 auto; padding:0 24px; }
+        {erreur && <p className="message-erreur" role="alert">{erreur}</p>}
 
-/* ── En-tête ─────────────────────────────── */
-header.site{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:28px 0;
-}
-.marque{
-  display:flex; align-items:center; gap:12px;
-  font-family:'Fraunces', serif; font-weight:560;
-  font-size:1.35rem; letter-spacing:.14em; color:var(--petale);
-}
-.marque:hover{ text-decoration:none; }
-.nav-droite{ display:flex; align-items:center; gap:22px; }
-.lien-nav{ color:var(--brume); font-weight:500; font-size:.95rem; }
-.lien-nav:hover{ color:var(--petale); text-decoration:none; }
-.bouton-clair{
-  font-weight:700; font-size:.92rem;
-  color:var(--nuit); background:var(--petale);
-  padding:10px 20px; border-radius:999px;
-  transition:transform .15s ease, background .15s ease;
-  border:none; cursor:pointer; display:inline-block;
-}
-.bouton-clair:hover{ background:#fff; transform:translateY(-1px); text-decoration:none; }
+        <form onSubmit={envoyer}>
+          <div className="champ">
+            <label htmlFor="email">Adresse e-mail</label>
+            <input id="email" name="email" type="email" required autoComplete="email" />
+          </div>
+          <div className="champ">
+            <label htmlFor="motDePasse">Mot de passe</label>
+            <input id="motDePasse" name="motDePasse" type="password" required autoComplete="current-password" />
+          </div>
+          <button className="bouton large" type="submit" disabled={enCours}>
+            {enCours ? "Connexion…" : "Se connecter"}
+          </button>
+        </form>
 
-/* ── Boutons principaux ──────────────────── */
-.bouton{
-  background:var(--iris); color:#fff;
-  border:none; border-radius:14px; cursor:pointer;
-  padding:15px 26px; font:inherit; font-weight:700; font-size:1rem;
-  transition:background .15s ease, transform .15s ease;
-  display:inline-block; text-align:center;
-}
-.bouton:hover{ background:var(--iris-fonce); transform:translateY(-1px); text-decoration:none; }
-.bouton:focus-visible{ outline:2px solid var(--petale); outline-offset:2px; }
-.bouton:disabled{ opacity:.6; cursor:wait; transform:none; }
-.bouton.large{ width:100%; }
-
-.lien-discret{
-  background:none; border:none; cursor:pointer;
-  color:var(--brume); font:inherit; font-size:.92rem;
-}
-.lien-discret:hover{ color:var(--petale); text-decoration:underline; }
-
-/* ── Héros (accueil) ─────────────────────── */
-.hero{ padding:72px 0 88px; }
-.eyebrow{
-  font-size:.8rem; font-weight:700; letter-spacing:.22em;
-  text-transform:uppercase; color:var(--brume); margin-bottom:22px;
-}
-h1{
-  font-family:'Fraunces', serif; font-weight:400;
-  font-size:clamp(2.5rem, 6vw, 4.4rem);
-  line-height:1.08; letter-spacing:-.01em;
-  max-width:15ch;
-}
-h1 em{ font-style:italic; color:var(--iris); }
-.hero .sous{
-  margin-top:26px; max-width:52ch;
-  font-size:1.12rem; color:var(--brume);
-}
-.hero .sous strong{ color:var(--petale); font-weight:500; }
-.hero .actions{ margin-top:36px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
-.hero .note{ margin-top:14px; font-size:.86rem; color:var(--brume); }
-
-/* ── Sections d'accueil ──────────────────── */
-section.bloc{ padding:88px 0; }
-h2{
-  font-family:'Fraunces', serif; font-weight:400;
-  font-size:clamp(1.8rem, 3.6vw, 2.6rem); line-height:1.15;
-  max-width:22ch;
-}
-.intro-section{ color:var(--brume); max-width:56ch; margin-top:16px; }
-
-.etapes{ margin-top:56px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
-.etape{
-  background:var(--nuit-2); border:1px solid var(--nuit-3);
-  border-radius:20px; padding:30px 26px;
-}
-.etape .num{
-  font-family:'Fraunces', serif; font-style:italic;
-  color:var(--iris); font-size:1.1rem; margin-bottom:14px;
-}
-.etape h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.28rem; margin-bottom:10px; }
-.etape p{ color:var(--brume); font-size:.98rem; }
-.etape p strong{ color:var(--petale); font-weight:500; }
-
-/* ── La lettre d'Irisia ──────────────────── */
-.lettre-fond{ background:var(--nuit-2); }
-.lettre{
-  background:var(--papier); color:var(--encre);
-  border-radius:4px; max-width:640px; margin:0 auto;
-  padding:56px 52px;
-  box-shadow:0 30px 60px rgba(0,0,0,.35);
-  font-family:'Fraunces', serif;
-}
-.lettre .de{ font-size:.8rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; font-family:'Karla'; color:#8A7FA0; margin-bottom:26px; }
-.lettre p{ font-style:italic; font-size:1.22rem; line-height:1.75; }
-.lettre p + p{ margin-top:20px; }
-.lettre .signature{ margin-top:34px; font-size:1.6rem; font-style:italic; color:var(--iris-fonce); }
-
-/* ── Confiance ───────────────────────────── */
-.confiance-grille{ margin-top:52px; display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; }
-.gage h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.22rem; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
-.gage h3::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--iris); flex:0 0 auto; }
-.gage p{ color:var(--brume); font-size:.97rem; }
-
-.final{ text-align:center; }
-.final h2{ margin:0 auto; }
-.final .actions{ margin-top:36px; }
-
-footer.site{
-  border-top:1px solid var(--nuit-3);
-  padding:36px 0 48px;
-  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
-  color:var(--brume); font-size:.88rem;
-}
-
-/* ── Cartes formulaires (inscription / connexion) ── */
-.page-auth{
-  min-height:calc(100vh - 110px);
-  display:flex; align-items:flex-start; justify-content:center;
-  padding:40px 24px 80px;
-}
-.carte-auth{
-  width:100%; max-width:460px;
-  background:var(--nuit-2); border:1px solid var(--nuit-3);
-  border-radius:22px; padding:38px 34px;
-}
-.carte-auth h1{
-  font-size:1.9rem; max-width:none; margin-bottom:8px;
-}
-.carte-auth .sous-titre{ color:var(--brume); font-size:.98rem; margin-bottom:28px; }
-
-.champ{ margin-bottom:18px; }
-.champ label{
-  display:block; font-weight:700; font-size:.88rem;
-  margin-bottom:7px; color:var(--petale);
-}
-.champ input, .champ select{
-  width:100%;
-  background:var(--nuit); color:var(--petale);
-  border:1px solid var(--nuit-3); border-radius:12px;
-  padding:13px 15px; font:inherit; font-size:1rem;
-  transition:border-color .15s ease;
-}
-.champ input::placeholder{ color:var(--brume); }
-.champ input:focus, .champ select:focus{ outline:2px solid var(--iris); outline-offset:2px; border-color:var(--iris); }
-.champ .aide{ font-size:.82rem; color:var(--brume); margin-top:6px; }
-
-.champ-consentement{
-  display:flex; gap:10px; align-items:flex-start;
-  margin:22px 0; font-size:.9rem; color:var(--brume);
-}
-.champ-consentement input{ margin-top:4px; accent-color:var(--iris); width:16px; height:16px; flex:0 0 auto; }
-
-.message-erreur{
-  background:rgba(240,169,169,.1); border:1px solid rgba(240,169,169,.35);
-  color:var(--erreur); border-radius:12px;
-  padding:12px 15px; font-size:.93rem; margin-bottom:18px;
-}
-.bascule-auth{ text-align:center; margin-top:22px; font-size:.93rem; color:var(--brume); }
-
-/* ── Espace membre ───────────────────────── */
-.espace{ padding:40px 0 90px; }
-.espace .bienvenue{ margin-bottom:8px; }
-.espace .sous-bienvenue{ color:var(--brume); max-width:58ch; margin-bottom:44px; }
-
-.parcours{ display:grid; gap:18px; max-width:720px; }
-.jalon{
-  display:flex; gap:18px; align-items:flex-start;
-  background:var(--nuit-2); border:1px solid var(--nuit-3);
-  border-radius:18px; padding:24px 24px;
-}
-.jalon .pastille{
-  width:34px; height:34px; flex:0 0 auto; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-weight:700; font-size:.95rem;
-  background:var(--nuit-3); color:var(--brume);
-  border:1px solid var(--nuit-3);
-}
-.jalon.fait .pastille{ background:var(--iris); color:#fff; border-color:var(--iris); }
-.jalon h3{ font-family:'Fraunces', serif; font-weight:560; font-size:1.15rem; }
-.jalon p{ color:var(--brume); font-size:.95rem; margin-top:4px; }
-.jalon .etat{
-  margin-left:auto; flex:0 0 auto; align-self:center;
-  font-size:.78rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
-  padding:6px 12px; border-radius:999px;
-}
-.etat.ok{ background:rgba(155,224,176,.12); color:var(--ok); }
-.etat.attente{ background:rgba(216,180,92,.12); color:var(--lueur); }
-.etat.bientot{ background:var(--nuit-3); color:var(--brume); }
-
-/* ── Pages légales ───────────────────────── */
-.page-legale{ max-width:680px; margin:0 auto; padding:70px 24px 90px; }
-.page-legale h1{ font-size:2.1rem; margin-bottom:26px; max-width:none; }
-.page-legale p{ color:var(--brume); margin-bottom:16px; }
-
-/* ── Accessibilité & mobile ──────────────── */
-@media (prefers-reduced-motion: reduce){
-  html{ scroll-behavior:auto; }
-  .bouton, .bouton-clair{ transition:none; }
-}
-@media (max-width: 820px){
-  .etapes, .confiance-grille{ grid-template-columns:1fr; }
-  .lettre{ padding:40px 28px; }
-  section.bloc{ padding:64px 0; }
-  .carte-auth{ padding:30px 22px; }
-  .jalon .etat{ display:none; }
+        <p className="bascule-auth">
+          Pas encore de compte&nbsp;? <Link href="/inscription">Créer mon compte</Link>
+        </p>
+      </div>
+    </main>
+  );
 }

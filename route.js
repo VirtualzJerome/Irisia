@@ -1,54 +1,158 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { trouverParEmail, creerUtilisateur } from "../../../lib/db";
-import { creerSession } from "../../../lib/session";
+import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
-function ageDepuis(dateNaissance) {
-  const auj = new Date();
-  const naissance = new Date(dateNaissance);
-  let age = auj.getFullYear() - naissance.getFullYear();
-  const m = auj.getMonth() - naissance.getMonth();
-  if (m < 0 || (m === 0 && auj.getDate() < naissance.getDate())) age--;
-  return age;
+function Logo() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+      <ellipse cx="15" cy="15" rx="13" ry="8.2" stroke="#8F79EA" strokeWidth="1.6" />
+      <circle cx="15" cy="15" r="4.6" stroke="#D8B45C" strokeWidth="1.6" />
+      <circle cx="15" cy="15" r="1.5" fill="#EFEAF6" />
+    </svg>
+  );
 }
 
-export async function POST(req) {
-  try {
-    const { prenom, email, motDePasse, dateNaissance, genre, consentement } = await req.json();
+export default function Accueil() {
+  return (
+    <>
+      <div className="wrap">
+        <header className="site">
+          <Link className="marque" href="/" aria-label="IRISIA — accueil">
+            <Logo /> IRISIA
+          </Link>
+          <nav className="nav-droite">
+            <Link className="lien-nav" href="/connexion">Se connecter</Link>
+            <Link className="bouton-clair" href="/inscription">Créer mon compte</Link>
+          </nav>
+        </header>
 
-    if (!prenom || prenom.trim().length < 2)
-      return NextResponse.json({ erreur: "Indiquez votre prénom." }, { status: 400 });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || ""))
-      return NextResponse.json({ erreur: "Cette adresse e-mail semble incomplète." }, { status: 400 });
-    if (!motDePasse || motDePasse.length < 8)
-      return NextResponse.json({ erreur: "Le mot de passe doit contenir au moins 8 caractères." }, { status: 400 });
-    if (!dateNaissance || isNaN(new Date(dateNaissance).getTime()))
-      return NextResponse.json({ erreur: "Indiquez votre date de naissance." }, { status: 400 });
-    if (ageDepuis(dateNaissance) < 18)
-      return NextResponse.json({ erreur: "IRISIA est réservé aux personnes majeures." }, { status: 400 });
-    if (ageDepuis(dateNaissance) > 110)
-      return NextResponse.json({ erreur: "Vérifiez votre date de naissance." }, { status: 400 });
-    if (consentement !== true)
-      return NextResponse.json({ erreur: "Vous devez accepter la politique de confidentialité." }, { status: 400 });
+        {/* ═════════ HÉROS ═════════ */}
+        <div className="hero">
+          <p className="eyebrow">L&apos;entremetteuse — bêta privée</p>
+          <h1>
+            Pas un catalogue de visages. <em>Une vraie rencontre.</em>
+          </h1>
+          <p className="sous">
+            Pas de swipe. Pas de faux profils. <strong>Irisia</strong>, votre
+            entremetteuse IA, apprend à vous connaître dès l&apos;inscription au fil
+            d&apos;une vraie conversation, puis ne vous présente que des personnes{" "}
+            <strong>vérifiées et choisies pour vous</strong>.
+          </p>
+          <div className="actions">
+            <Link className="bouton" href="/inscription">Créer mon compte</Link>
+          </div>
+          <p className="note">
+            Bêta privée, places limitées. Aucune publicité, jamais.
+          </p>
+        </div>
 
-    const emailPropre = email.trim().toLowerCase();
-    if (await trouverParEmail(emailPropre))
-      return NextResponse.json({ erreur: "Un compte existe déjà avec cette adresse. Connectez-vous." }, { status: 409 });
+        {/* ═════════ COMMENT ÇA MARCHE ═════════ */}
+        <section className="bloc" id="comment">
+          <h2>Trois pas vers une vraie rencontre</h2>
+          <p className="intro-section">
+            Un parcours pensé pour la qualité, pas pour le volume. Chaque étape existe
+            pour une seule raison&nbsp;: que la personne en face de vous en vaille la peine.
+          </p>
+          <div className="etapes">
+            <article className="etape">
+              <p className="num">Premier pas</p>
+              <h3>Prouvez que vous êtes vous</h3>
+              <p>
+                Photos et selfie vidéo à l&apos;inscription.{" "}
+                <strong>100&nbsp;% des membres sont vérifiés</strong>&nbsp;: pas de faux
+                profils, pas de bots, pas de mauvaises surprises.
+              </p>
+            </article>
+            <article className="etape">
+              <p className="num">Deuxième pas</p>
+              <h3>Conversez avec Irisia</h3>
+              <p>
+                Vingt minutes d&apos;une vraie conversation&nbsp;— pas un questionnaire à
+                cases. Vos valeurs, votre rythme de vie, ce que vous cherchez vraiment.{" "}
+                <strong>Irisia écoute, comprend, retient.</strong>
+              </p>
+            </article>
+            <article className="etape">
+              <p className="num">Troisième pas</p>
+              <h3>Recevez vos présentations</h3>
+              <p>
+                Quand Irisia trouve quelqu&apos;un qui vous correspond vraiment, elle vous
+                le présente&nbsp;— et <strong>vous explique pourquoi</strong>. Si le
+                courant ne passe pas, dites-le-lui&nbsp;: elle affinera la prochaine
+                présentation.
+              </p>
+            </article>
+          </div>
+        </section>
+      </div>
 
-    const utilisateur = await creerUtilisateur({
-      email: emailPropre,
-      motDePasseHash: await bcrypt.hash(motDePasse, 10),
-      prenom: prenom.trim(),
-      dateNaissance,
-      genre: genre || null,
-    });
+      {/* ═════════ LA LETTRE D'IRISIA ═════════ */}
+      <div className="lettre-fond">
+        <div className="wrap">
+          <section className="bloc">
+            <div className="lettre">
+              <p className="de">Un mot d&apos;Irisia</p>
+              <p>Bonsoir. Je m&apos;appelle Irisia.</p>
+              <p>
+                Je ne vous montrerai jamais un catalogue de visages. Je ne vous demanderai
+                jamais de juger quelqu&apos;un en une seconde. Ce n&apos;est pas ainsi que
+                naissent les histoires qui durent.
+              </p>
+              <p>
+                Nous allons d&apos;abord parler, vous et moi. Puis, quand j&apos;aurai
+                trouvé quelqu&apos;un qui vous correspond vraiment, je vous le
+                présenterai&nbsp;— et je vous dirai pourquoi je crois en vous deux.
+              </p>
+              <p className="signature">Irisia</p>
+            </div>
+          </section>
+        </div>
+      </div>
 
-    await creerSession(utilisateur.id);
-    return NextResponse.json({ ok: true });
-  } catch (e) {
-    console.error("Erreur inscription:", e);
-    return NextResponse.json({ erreur: "Une erreur est survenue. Réessayez dans un instant." }, { status: 500 });
-  }
+      <div className="wrap">
+        {/* ═════════ CONFIANCE ═════════ */}
+        <section className="bloc" id="confiance">
+          <h2>La confiance n&apos;est pas une option</h2>
+          <div className="confiance-grille">
+            <div className="gage">
+              <h3>Identité vérifiée</h3>
+              <p>
+                Chaque membre passe une vérification photo et vidéo avant de rencontrer
+                qui que ce soit. Sans exception.
+              </p>
+            </div>
+            <div className="gage">
+              <h3>Vos données en Europe</h3>
+              <p>
+                Hébergement en Union européenne, conformité RGPD, suppression de compte en
+                un clic. Vos conversations avec Irisia ne sont jamais vendues, à personne.
+              </p>
+            </div>
+            <div className="gage">
+              <h3>Jamais de publicité</h3>
+              <p>
+                Notre modèle est simple&nbsp;: un service que l&apos;on choisit de payer,
+                pas une attention que l&apos;on revend. Votre temps sur IRISIA se compte
+                en minutes, pas en heures.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ═════════ APPEL FINAL ═════════ */}
+        <section className="bloc final">
+          <h2>Votre prochaine rencontre pourrait être la bonne.</h2>
+          <div className="actions">
+            <Link className="bouton" href="/inscription">Créer mon compte</Link>
+          </div>
+        </section>
+
+        <footer className="site">
+          <span>© 2026 IRISIA — fait avec soin, en France.</span>
+          <span>
+            <Link href="/confidentialite">Confidentialité</Link> ·{" "}
+            <Link href="/mentions-legales">Mentions légales</Link>
+          </span>
+        </footer>
+      </div>
+    </>
+  );
 }
