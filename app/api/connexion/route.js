@@ -34,6 +34,11 @@ export async function POST(req) {
       await enregistrerEchecConnexion(emailPropre);
       return identifiantsInvalides;
     }
+    if (utilisateur.banni)
+      return NextResponse.json(
+        { erreur: "Ce compte a été suspendu. Contactez-nous si vous pensez qu'il s'agit d'une erreur." },
+        { status: 403 }
+      );
     await effacerEchecsConnexion(emailPropre);
 
     await creerSession(utilisateur.id);

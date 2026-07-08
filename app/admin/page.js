@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
-import { trouverParId, listerEnAttente, listerMedias } from "../../lib/db";
+import { trouverParId, listerEnAttente, listerMedias, listerSignalements, statistiques } from "../../lib/db";
 import { estAdmin } from "../../lib/admin";
 import DecisionAdmin from "../../components/DecisionAdmin";
 import VagueMatching from "../../components/VagueMatching";
+import TraiterSignalement from "../../components/TraiterSignalement";
 
 export const metadata = { title: "Administration — IRISIA" };
 export const dynamic = "force-dynamic";
@@ -22,7 +23,9 @@ export default async function Admin() {
   const moi = await trouverParId(session.userId);
   if (!moi || !estAdmin(moi.email)) redirect("/espace");
 
+  const stats = await statistiques();
   const enAttente = await listerEnAttente();
+  const signalements = await listerSignalements();
   const dossiers = await Promise.all(
     enAttente.map(async (u) => ({ ...u, medias: await listerMedias(u.id) }))
   );
@@ -40,7 +43,46 @@ export default async function Admin() {
           Pour chaque dossier : comparez le visage de la vidéo aux photos, et vérifiez que
           le geste demandé est bien exécuté. Au moindre doute, refusez — le membre pourra recommencer.
         </p>
+        <div className="stats-grille">
+          <div className="stat"><b>{stats.membres}</b><span>membres</span></div>
+          <div className="stat"><b>{stats.verifies}</b><span>vérifiés</span></div>
+          <div className="stat"><b>{stats.dossiers_en_attente}</b><span>dossiers à examiner</span></div>
+          <div className="stat"><b>{stats.entretiens}</b><span>entretiens faits</span></div>
+          <div className="stat"><b>{stats.presentations}</b><span>présentations</span></div>
+          <div className="stat"><b>{stats.couples}</b><span>oui mutuels</span></div>
+          <div className="stat"><b>{stats.messages}</b><span>messages échangés</span></div>
+          <div className="stat"><b>{stats.signalements_ouverts}</b><span>signalements ouverts</span></div>
+        </div>
+
         <VagueMatching />
+
+        {signalements.length > 0 && (
+          <section style={{ marginBottom: "40px" }}>
+            <h2 style={{ fontSize: "1.5rem", marginBottom: "16px" }}>
+              Signalements ({signalements.filter((s) => !s.traite).length} à traiter)
+            </h2>
+            <div className="parcours">
+              {signalements.map((s) => (
+                <div key={s.id} className={"jalon" + (s.traite ? " fait" : " zone-danger")}>
+                  <span className="pastille">{s.traite ? "✓" : "🚨"}</span>
+                  <div style={{ flex: 1 }}>
+                    <h3>
+                      {s.auteur_prenom} signale {s.cible_prenom}
+                      {s.cible_bannie && " (déjà banni)"}
+                    </h3>
+                    <p>&laquo;&nbsp;{s.motif}&nbsp;&raquo;</p>
+                    <p style={{ fontSize: ".85rem", marginTop: "6px" }}>
+                      Auteur&nbsp;: {s.auteur_email} — Cible&nbsp;: {s.cible_email}
+                    </p>
+                    {!s.traite && (
+                      <TraiterSignalement id={s.id} cibleId={s.cible_id} cibleBannie={s.cible_bannie} />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {dossiers.length === 0 && (
           <p className="chat-info">Aucun dossier en attente. ☕</p>

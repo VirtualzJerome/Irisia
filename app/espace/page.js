@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
-import { trouverParId, presentationActivePour } from "../../lib/db";
+import { trouverParId, presentationActivePour, notificationsPour, listerMedias } from "../../lib/db";
 import BoutonDeconnexion from "../../components/BoutonDeconnexion";
 import { estAdmin } from "../../lib/admin";
 
@@ -25,10 +25,30 @@ export default async function Espace() {
   const utilisateur = await trouverParId(session.userId);
   if (!utilisateur) redirect("/connexion");
 
+  if (utilisateur.banni)
+    return (
+      <div className="wrap">
+        <header className="site">
+          <Link className="marque" href="/">IRISIA</Link>
+          <BoutonDeconnexion />
+        </header>
+        <main className="espace">
+          <h1 className="bienvenue">Compte suspendu</h1>
+          <p className="sous-bienvenue">
+            Ce compte a été suspendu à la suite d&apos;un signalement. Si vous pensez
+            qu&apos;il s&apos;agit d&apos;une erreur, contactez-nous. Vous conservez vos
+            droits sur vos données depuis la page <Link href="/compte">Mon compte</Link>.
+          </p>
+        </main>
+      </div>
+    );
+
   const verif = utilisateur.statut_verification;
   const pret = verif === "VERIFIE" && utilisateur.entretien_termine;
   const pres = pret ? await presentationActivePour(utilisateur.id) : null;
   const mutuelle = pres && pres.reponse_a === "ACCEPTE" && pres.reponse_b === "ACCEPTE";
+  const notif = pret ? await notificationsPour(utilisateur.id) : { type: null };
+  const photoId = (await listerMedias(utilisateur.id)).find((m) => m.type === "photo")?.id || null;
 
   return (
     <div className="wrap">
@@ -37,6 +57,10 @@ export default async function Espace() {
           <Logo /> IRISIA
         </Link>
         <nav className="nav-droite">
+          {photoId && (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img className="avatar" src={"/api/media/" + photoId} alt="" aria-hidden="true" />
+          )}
           {estAdmin(utilisateur) && <Link className="lien-nav" href="/admin">Admin</Link>}
           <Link className="lien-nav" href="/compte">Mon compte</Link>
           <BoutonDeconnexion />
@@ -114,10 +138,14 @@ export default async function Espace() {
               <div>
                 <h3>Vos présentations</h3>
                 <p>
-                  {mutuelle
+                  {notif.type === "conversation" && notif.non_lus > 0
+                    ? `💬 ${notif.non_lus} nouveau${notif.non_lus > 1 ? "x" : ""} message${notif.non_lus > 1 ? "s" : ""} vous attend${notif.non_lus > 1 ? "ent" : ""}.`
+                    : mutuelle
                     ? "Une conversation est ouverte — quelqu'un vous attend."
-                    : pres
-                    ? "Irisia a quelqu'un à vous présenter."
+                    : notif.type === "presentation"
+                    ? "🌿 Irisia a quelqu'un à vous présenter."
+                    : notif.type === "attente_reponse"
+                    ? "Vous avez dit oui — Irisia attend la réponse de l'autre côté."
                     : "Votre parcours est complet. Irisia cherche pour vous, et ne vous présentera quelqu'un que lorsqu'elle y croira vraiment."}
                 </p>
                 <p style={{ marginTop: "14px" }}>

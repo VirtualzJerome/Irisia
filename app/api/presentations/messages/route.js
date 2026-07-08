@@ -5,6 +5,7 @@ import { lireSession } from "../../../../lib/session";
 import {
   trouverParId, presentationActivePour,
   listerMessagesConversation, ajouterMessageConversation,
+  marquerConversationLue,
 } from "../../../../lib/db";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ async function contexte() {
   if (!session) return { code: 401 };
   const moi = await trouverParId(session.userId);
   if (!moi) return { code: 401 };
+  if (moi.banni) return { code: 403 };
   const pres = await presentationActivePour(moi.id);
   if (!pres) return { code: 404 };
   const mutuelle = pres.reponse_a === "ACCEPTE" && pres.reponse_b === "ACCEPTE";
@@ -27,6 +29,7 @@ export async function GET(req) {
     if (!c.pres) return NextResponse.json({ erreur: "Conversation indisponible." }, { status: c.code });
     const apres = Number(new URL(req.url).searchParams.get("apres") || 0);
     const messages = await listerMessagesConversation(c.pres.id, apres);
+    await marquerConversationLue(c.pres.id, c.moi.id);
     return NextResponse.json({
       messages: messages.map((m) => ({
         id: m.id,

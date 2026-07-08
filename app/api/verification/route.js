@@ -23,7 +23,9 @@ const MAX_PHOTOS = 3;
 async function membre() {
   const session = await lireSession();
   if (!session) return null;
-  return trouverParId(session.userId);
+  const u = await trouverParId(session.userId);
+  if (u?.banni) return null; // compte suspendu : accès coupé
+  return u;
 }
 
 export async function GET() {

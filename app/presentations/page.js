@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ChargeurIrisia from "../../components/ChargeurIrisia";
+import SignalerMembre from "../../components/SignalerMembre";
 
 export default function Presentations() {
   const router = useRouter();
@@ -123,7 +125,7 @@ export default function Presentations() {
   if (chargement)
     return (
       <div className="chat-page"><Entete statut="Vos présentations" />
-        <main className="chat-fil"><p className="chat-info">Irisia consulte ses notes…</p></main>
+        <main className="chat-fil"><ChargeurIrisia texte="Irisia consulte ses notes…" /></main>
       </div>
     );
 
@@ -187,6 +189,7 @@ export default function Presentations() {
               <p>{m.contenu}</p>
             </div>
           ))}
+          <SignalerMembre prenom={pres.prenom} />
           <div ref={finListe} />
         </main>
         <form className="chat-saisie" onSubmit={envoyerMessage}>
@@ -259,6 +262,7 @@ export default function Presentations() {
               </button>
             </div>
           )}
+          <SignalerMembre prenom={pres.prenom} />
         </div>
       </main>
     </div>

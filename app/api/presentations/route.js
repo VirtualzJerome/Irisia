@@ -7,6 +7,7 @@ import {
   listerMedias, marquerRecherche,
 } from "../../../lib/db";
 import { chercherPresentationPour } from "../../../lib/matching";
+import { envoyerEmail, emailMutuel } from "../../../lib/email";
 
 export const dynamic = "force-dynamic";
 const DELAI_RECHERCHE_MS = 5 * 60 * 1000; // 5 minutes entre deux recherches auto
@@ -45,6 +46,8 @@ export async function GET() {
     if (!session) return NextResponse.json({ erreur: "Non connecté." }, { status: 401 });
     const moi = await trouverParId(session.userId);
     if (!moi) return NextResponse.json({ erreur: "Non connecté." }, { status: 401 });
+    if (moi.banni)
+      return NextResponse.json({ erreur: "Ce compte a été suspendu." }, { status: 403 });
 
     const manque = [];
     if (moi.statut_verification !== "VERIFIE") manque.push("verification");
@@ -80,6 +83,8 @@ export async function POST(req) {
     if (!session) return NextResponse.json({ erreur: "Non connecté." }, { status: 401 });
     const moi = await trouverParId(session.userId);
     if (!moi) return NextResponse.json({ erreur: "Non connecté." }, { status: 401 });
+    if (moi.banni)
+      return NextResponse.json({ erreur: "Ce compte a été suspendu." }, { status: 403 });
 
     const { action, reponse, motif } = await req.json();
     if (action !== "repondre" || !["ACCEPTE", "DECLINE"].includes(reponse))
@@ -89,6 +94,14 @@ export async function POST(req) {
     if (!pres) return NextResponse.json({ erreur: "Aucune présentation en cours." }, { status: 400 });
 
     const maj = await repondrePresentation(pres.id, moi.id, reponse, (motif || "").slice(0, 500));
+
+    // Si les deux viennent de dire oui : la bonne nouvelle part aux deux
+    if (maj && maj.reponse_a === "ACCEPTE" && maj.reponse_b === "ACCEPTE") {
+      const a = await trouverParId(maj.membre_a);
+      const b = await trouverParId(maj.membre_b);
+      envoyerEmail({ a: a.email, ...emailMutuel(a.prenom, b.prenom) }).catch(() => {});
+      envoyerEmail({ a: b.email, ...emailMutuel(b.prenom, a.prenom) }).catch(() => {});
+    }
     if (reponse === "DECLINE") await marquerRecherche(moi.id).catch(() => {});
     return NextResponse.json({ ok: true, presentation: await vue(maj, moi) });
   } catch (e) {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ChargeurIrisia from "../../components/ChargeurIrisia";
 
 export default function Entretien() {
   const router = useRouter();
@@ -87,7 +88,7 @@ export default function Entretien() {
       </header>
 
       <main className="chat-fil" aria-live="polite">
-        {chargement && <p className="chat-info">Irisia arrive…</p>}
+        {chargement && <ChargeurIrisia texte="Irisia arrive…" />}
 
         {messages.map((m, i) => (
           <div key={i} className={"bulle " + (m.role === "user" ? "moi" : "irisia")}>

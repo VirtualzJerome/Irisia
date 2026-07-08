@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { lireSession } from "../../../../lib/session";
 import { trouverParId, deciderVerification } from "../../../../lib/db";
 import { estAdmin } from "../../../../lib/admin";
+import { envoyerEmail, emailVerification } from "../../../../lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,9 @@ export async function POST(req) {
       return NextResponse.json({ erreur: "Requête invalide." }, { status: 400 });
 
     await deciderVerification(utilisateurId, decision);
+    const membre = await trouverParId(utilisateurId);
+    if (membre)
+      envoyerEmail({ a: membre.email, ...emailVerification(membre.prenom, decision === "VERIFIE") }).catch(() => {});
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("Erreur décision admin:", e);

@@ -56,6 +56,9 @@ export default function Connexion() {
           </button>
         </form>
 
+        <p className="bascule-auth" style={{ marginTop: "14px" }}>
+          <Link href="/mot-de-passe-oublie">Mot de passe oublié&nbsp;?</Link>
+        </p>
         <p className="bascule-auth">
           Pas encore de compte&nbsp;? <Link href="/inscription">Créer mon compte</Link>
         </p>

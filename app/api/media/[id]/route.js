@@ -12,6 +12,7 @@ async function acces(id) {
   if (!session) return { code: 401 };
   const u = await trouverParId(session.userId);
   if (!u) return { code: 401 };
+  if (u.banni) return { code: 403 };
   const media = await obtenirMedia(id);
   if (!media) return { code: 404 };
   let autorise = media.utilisateur === u.id || estAdmin(u.email);

@@ -23,7 +23,9 @@ const NB_MESSAGES_MAX = 80;
 async function utilisateurConnecte() {
   const session = await lireSession();
   if (!session) return null;
-  return trouverParId(session.userId);
+  const u = await trouverParId(session.userId);
+  if (u?.banni) return null; // compte suspendu : accès coupé
+  return u;
 }
 
 // ── GET : charger l'entretien (et l'ouvrir s'il n'existe pas) ──
