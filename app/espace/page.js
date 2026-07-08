@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
 import { trouverParId, presentationActivePour } from "../../lib/db";
 import BoutonDeconnexion from "../../components/BoutonDeconnexion";
+import { estAdmin } from "../../lib/admin";
 
 export const metadata = { title: "Mon espace — IRISIA" };
 export const dynamic = "force-dynamic";
@@ -36,6 +37,8 @@ export default async function Espace() {
           <Logo /> IRISIA
         </Link>
         <nav className="nav-droite">
+          {estAdmin(utilisateur) && <Link className="lien-nav" href="/admin">Admin</Link>}
+          <Link className="lien-nav" href="/compte">Mon compte</Link>
           <BoutonDeconnexion />
         </nav>
       </header>

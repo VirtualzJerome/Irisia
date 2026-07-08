@@ -175,6 +175,11 @@ export default function Presentations() {
               {pres.prenom} et vous avez tous les deux dit oui. Je vous laisse — faites
               connaissance, prenez votre temps. Je croise les doigts pour vous deux. 🌿
             </p>
+            {pres.brise_glace && (
+              <p style={{ marginTop: "10px" }}>
+                Pour briser la glace&nbsp;: {pres.brise_glace}
+              </p>
+            )}
           </div>
           {messages.map((m) => (
             <div key={m.id} className={"bulle " + (m.de_moi ? "moi" : "irisia")}>

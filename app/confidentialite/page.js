@@ -13,8 +13,10 @@ export default function Confidentialite() {
       </p>
       <p>
         Vos données sont hébergées en Union européenne. Elles ne sont jamais vendues ni
-        partagées avec des tiers à des fins publicitaires. Vous pouvez demander la
-        suppression complète de votre compte et de vos données à tout moment.
+        partagées avec des tiers à des fins publicitaires. Depuis la page &laquo;&nbsp;Mon compte&nbsp;&raquo;, vous pouvez à tout moment
+        télécharger l&apos;intégralité de vos données, ou supprimer définitivement votre
+        compte — photos, vidéo, entretien, présentations et conversations compris,
+        sans copie conservée.
       </p>
       <p>
         Ce document sera complété avant l&apos;ouverture publique du service.

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { trouverParEmail } from "../../../lib/db";
+import { trouverParEmail, verifierBlocage, enregistrerEchecConnexion, effacerEchecsConnexion } from "../../../lib/db";
 import { creerSession } from "../../../lib/session";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +8,16 @@ export const dynamic = "force-dynamic";
 export async function POST(req) {
   try {
     const { email, motDePasse } = await req.json();
-    const utilisateur = await trouverParEmail((email || "").trim().toLowerCase());
+    const emailPropre = (email || "").trim().toLowerCase();
+
+    const minutes = await verifierBlocage(emailPropre);
+    if (minutes > 0)
+      return NextResponse.json(
+        { erreur: `Trop de tentatives. Compte temporairement verrouillé — réessayez dans ${minutes} min.` },
+        { status: 429 }
+      );
+
+    const utilisateur = await trouverParEmail(emailPropre);
 
     // Même message dans les deux cas : on ne révèle pas si l'email existe.
     const identifiantsInvalides = NextResponse.json(
@@ -16,9 +25,16 @@ export async function POST(req) {
       { status: 401 }
     );
 
-    if (!utilisateur) return identifiantsInvalides;
+    if (!utilisateur) {
+      await enregistrerEchecConnexion(emailPropre);
+      return identifiantsInvalides;
+    }
     const valide = await bcrypt.compare(motDePasse || "", utilisateur.mot_de_passe_hash);
-    if (!valide) return identifiantsInvalides;
+    if (!valide) {
+      await enregistrerEchecConnexion(emailPropre);
+      return identifiantsInvalides;
+    }
+    await effacerEchecsConnexion(emailPropre);
 
     await creerSession(utilisateur.id);
     return NextResponse.json({ ok: true });

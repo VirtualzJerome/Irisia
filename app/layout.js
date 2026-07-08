@@ -4,6 +4,12 @@ export const metadata = {
   title: "IRISIA — Pas un catalogue de visages. Une vraie rencontre.",
   description:
     "Irisia, votre entremetteuse IA, apprend à vous connaître dès l'inscription et ne vous présente que des personnes vérifiées, choisies pour vous.",
+  icons: { icon: "/icone-192.png", apple: "/icone-192.png" },
+  appleWebApp: { capable: true, title: "IRISIA", statusBarStyle: "black-translucent" },
+};
+
+export const viewport = {
+  themeColor: "#251D38",
 };
 
 export default function RootLayout({ children }) {

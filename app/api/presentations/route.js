@@ -35,6 +35,7 @@ async function vue(pres, moi) {
     ma_reponse: maReponse,
     elle_a_accepte: saReponse === "ACCEPTE",
     mutuelle: maReponse === "ACCEPTE" && saReponse === "ACCEPTE",
+    brise_glace: pres.brise_glace || null,
   };
 }
 

@@ -395,3 +395,7 @@ footer.site{
   padding:12px 14px; font:inherit; font-size:.98rem; margin-bottom:14px; resize:vertical;
 }
 .pres-declin textarea:focus{ outline:2px solid var(--iris); outline-offset:2px; }
+
+/* ── Mon compte ──────────────────────────── */
+.zone-danger{ border-color:rgba(240,169,169,.35); }
+.zone-danger h3{ color:var(--erreur); }
