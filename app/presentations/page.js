@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { COULEURS, OPTIONS_ENFANTS, OPTIONS_TABAC, etiquettePour } from "../../lib/options-profil";
 import ChargeurIrisia from "../../components/ChargeurIrisia";
 import SignalerMembre from "../../components/SignalerMembre";
 
@@ -207,9 +208,19 @@ export default function Presentations() {
   return (
     <div className="chat-page"><Entete statut="Une présentation pour vous" />
       <main className="chat-fil">
-        <div className="carte-presentation">
+        <div className="carte-presentation" style={{ "--accent": COULEURS[pres.profil?.couleur_accent] || COULEURS.iris }}>
           <p className="pres-eyebrow">Irisia vous présente</p>
           <h1 className="pres-nom">{pres.prenom}, {pres.age} ans <span className="badge-verifie">✓ Vérifié</span></h1>
+
+          {pres.profil && (
+            <div className="pres-pastilles">
+              {pres.profil.ville && <span className="pastille-info">📍 {pres.profil.ville}</span>}
+              {pres.profil.profession && <span className="pastille-info">💼 {pres.profil.profession}</span>}
+              {pres.profil.taille_cm && <span className="pastille-info">📏 {pres.profil.taille_cm} cm</span>}
+              {pres.profil.enfants && <span className="pastille-info">👶 {etiquettePour(OPTIONS_ENFANTS, pres.profil.enfants)}</span>}
+              {pres.profil.tabac && <span className="pastille-info">🚭 {etiquettePour(OPTIONS_TABAC, pres.profil.tabac)}</span>}
+            </div>
+          )}
 
           {pres.photos.length > 0 && (
             <div className="pres-photos">
@@ -219,6 +230,23 @@ export default function Presentations() {
               ))}
             </div>
           )}
+
+          {pres.profil?.bio && <p className="pres-bio">&laquo;&nbsp;{pres.profil.bio}&nbsp;&raquo;</p>}
+
+          {(pres.profil?.passions || []).length > 0 && (
+            <div className="pres-pastilles">
+              {pres.profil.passions.map((x) => (
+                <span className="pastille-passion" key={x} style={{ borderColor: "var(--accent)" }}>{x}</span>
+              ))}
+            </div>
+          )}
+
+          {(pres.profil?.reponses_prompts || []).map((r, i) => (
+            <div className="pres-prompt" key={i}>
+              <p className="q">{r.question}</p>
+              <p className="r">{r.reponse}</p>
+            </div>
+          ))}
 
           <div className="pres-mot">
             <p className="de">Le mot d&apos;Irisia</p>

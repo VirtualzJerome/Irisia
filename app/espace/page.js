@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
-import { trouverParId, presentationActivePour, notificationsPour, listerMedias } from "../../lib/db";
+import { trouverParId, presentationActivePour, notificationsPour, listerMedias, profilPublicDe } from "../../lib/db";
 import BoutonDeconnexion from "../../components/BoutonDeconnexion";
 import { estAdmin } from "../../lib/admin";
+import { calculerCompletude } from "../../lib/options-profil";
 
 export const metadata = { title: "Mon espace — IRISIA" };
 export const dynamic = "force-dynamic";
@@ -44,6 +45,8 @@ export default async function Espace() {
     );
 
   const verif = utilisateur.statut_verification;
+  const nbPhotos = (await listerMedias(utilisateur.id)).filter((m) => m.type === "photo").length;
+  const completude = calculerCompletude(profilPublicDe(utilisateur), nbPhotos);
   const pret = verif === "VERIFIE" && utilisateur.entretien_termine;
   const pres = pret ? await presentationActivePour(utilisateur.id) : null;
   const mutuelle = pres && pres.reponse_a === "ACCEPTE" && pres.reponse_b === "ACCEPTE";
@@ -62,6 +65,7 @@ export default async function Espace() {
             <img className="avatar" src={"/api/media/" + photoId} alt="" aria-hidden="true" />
           )}
           {estAdmin(utilisateur) && <Link className="lien-nav" href="/admin">Admin</Link>}
+          <Link className="lien-nav" href="/profil">Mon profil</Link>
           <Link className="lien-nav" href="/compte">Mon compte</Link>
           <BoutonDeconnexion />
         </nav>
@@ -130,6 +134,21 @@ export default async function Espace() {
             </span>
           </div>
         </div>
+
+        {completude < 100 && (
+          <div className="parcours" style={{ marginTop: "18px" }}>
+            <div className="jalon">
+              <span className="pastille">✨</span>
+              <div style={{ flex: 1 }}>
+                <h3>Votre profil — complet à {completude}&nbsp;%</h3>
+                <p>Photos, passions, bio écrite par Irisia, couleur… Plus votre profil est riche, plus Irisia voit juste.</p>
+                <p style={{ marginTop: "14px" }}>
+                  <Link className="bouton" href="/profil">Compléter mon profil</Link>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {pret && (
           <div className="parcours" style={{ marginTop: "18px" }}>

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { lireSession } from "../../../lib/session";
 import {
   trouverParId, presentationActivePour, repondrePresentation,
-  listerMedias, marquerRecherche,
+  listerMedias, marquerRecherche, profilPublicDe,
 } from "../../../lib/db";
 import { chercherPresentationPour } from "../../../lib/matching";
 import { envoyerEmail, emailMutuel } from "../../../lib/email";
@@ -37,6 +37,7 @@ async function vue(pres, moi) {
     elle_a_accepte: saReponse === "ACCEPTE",
     mutuelle: maReponse === "ACCEPTE" && saReponse === "ACCEPTE",
     brise_glace: pres.brise_glace || null,
+    profil: profilPublicDe(autre),
   };
 }
 
