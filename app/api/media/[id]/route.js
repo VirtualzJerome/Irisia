@@ -2,7 +2,7 @@
 // propriétaire ou à un administrateur. DELETE pour le propriétaire.
 import { NextResponse } from "next/server";
 import { lireSession } from "../../../../lib/session";
-import { trouverParId, obtenirMedia, supprimerMedia } from "../../../../lib/db";
+import { trouverParId, obtenirMedia, supprimerMedia, partagentPresentationActive } from "../../../../lib/db";
 import { estAdmin } from "../../../../lib/admin";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,10 @@ async function acces(id) {
   if (!u) return { code: 401 };
   const media = await obtenirMedia(id);
   if (!media) return { code: 404 };
-  const autorise = media.utilisateur === u.id || estAdmin(u.email);
+  let autorise = media.utilisateur === u.id || estAdmin(u.email);
+  // Membres liés par une présentation active : photos visibles, vidéo de vérification JAMAIS
+  if (!autorise && media.type === "photo")
+    autorise = await partagentPresentationActive(media.utilisateur, u.id);
   if (!autorise) return { code: 403 };
   return { media, u };
 }

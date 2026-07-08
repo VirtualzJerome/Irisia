@@ -352,3 +352,46 @@ footer.site{
 .admin-actions{ display:flex; gap:12px; margin-top:16px; }
 .bouton.refus{ background:#8A3B3B; }
 .bouton.refus:hover{ background:#7A2F2F; }
+
+/* ── Présentations ───────────────────────── */
+.recherche-titre{ font-family:'Fraunces', serif; font-size:1.3rem; color:var(--petale); margin-bottom:12px; }
+.carte-presentation{
+  max-width:560px; margin:10px auto; width:100%;
+  background:var(--nuit-2); border:1px solid var(--nuit-3);
+  border-radius:22px; padding:30px 28px;
+}
+.pres-eyebrow{ font-size:.78rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--brume); margin-bottom:8px; }
+.pres-nom{ font-size:1.9rem; max-width:none; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.badge-verifie{
+  font-family:'Karla'; font-size:.72rem; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ok);
+  background:rgba(155,224,176,.12); border-radius:999px; padding:6px 12px;
+}
+.pres-photos{ display:flex; gap:10px; margin:20px 0; flex-wrap:wrap; }
+.pres-photos img{
+  width:calc(33.5% - 7px); min-width:120px; flex:1 1 120px;
+  aspect-ratio:3/4; object-fit:cover; border-radius:14px;
+  border:1px solid var(--nuit-3);
+}
+.pres-mot{
+  background:var(--papier); color:var(--encre);
+  border-radius:6px; padding:22px 24px; margin:8px 0 22px;
+  font-family:'Fraunces', serif;
+}
+.pres-mot .de{ font-family:'Karla'; font-size:.75rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:#8A7FA0; margin-bottom:10px; }
+.pres-mot .texte{ font-style:italic; font-size:1.08rem; line-height:1.7; }
+.pres-mot .signature{ margin-top:12px; font-style:italic; font-size:1.25rem; color:var(--iris-fonce); }
+.pres-boutons{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.bouton.refus{ background:transparent; border:1px solid var(--nuit-3); color:var(--brume); }
+.bouton.refus:hover{ border-color:var(--erreur); color:var(--erreur); background:transparent; }
+.pres-attente{
+  background:rgba(155,224,176,.08); border:1px solid rgba(155,224,176,.25);
+  border-radius:14px; padding:16px 18px; color:var(--ok);
+}
+.pres-declin label{ display:block; font-size:.92rem; color:var(--brume); margin-bottom:8px; }
+.pres-declin textarea{
+  width:100%; background:var(--nuit); color:var(--petale);
+  border:1px solid var(--nuit-3); border-radius:12px;
+  padding:12px 14px; font:inherit; font-size:.98rem; margin-bottom:14px; resize:vertical;
+}
+.pres-declin textarea:focus{ outline:2px solid var(--iris); outline-offset:2px; }

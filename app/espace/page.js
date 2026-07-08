@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
-import { trouverParId } from "../../lib/db";
+import { trouverParId, presentationActivePour } from "../../lib/db";
 import BoutonDeconnexion from "../../components/BoutonDeconnexion";
 
 export const metadata = { title: "Mon espace — IRISIA" };
@@ -25,6 +25,9 @@ export default async function Espace() {
   if (!utilisateur) redirect("/connexion");
 
   const verif = utilisateur.statut_verification;
+  const pret = verif === "VERIFIE" && utilisateur.entretien_termine;
+  const pres = pret ? await presentationActivePour(utilisateur.id) : null;
+  const mutuelle = pres && pres.reponse_a === "ACCEPTE" && pres.reponse_b === "ACCEPTE";
 
   return (
     <div className="wrap">
@@ -100,6 +103,29 @@ export default async function Espace() {
             </span>
           </div>
         </div>
+
+        {pret && (
+          <div className="parcours" style={{ marginTop: "18px" }}>
+            <div className="jalon fait">
+              <span className="pastille">🌿</span>
+              <div>
+                <h3>Vos présentations</h3>
+                <p>
+                  {mutuelle
+                    ? "Une conversation est ouverte — quelqu'un vous attend."
+                    : pres
+                    ? "Irisia a quelqu'un à vous présenter."
+                    : "Votre parcours est complet. Irisia cherche pour vous, et ne vous présentera quelqu'un que lorsqu'elle y croira vraiment."}
+                </p>
+                <p style={{ marginTop: "14px" }}>
+                  <Link className="bouton" href="/presentations">
+                    {mutuelle ? "Reprendre la conversation" : pres ? "Découvrir la présentation" : "Voir mes présentations"}
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

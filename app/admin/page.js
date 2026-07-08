@@ -4,6 +4,7 @@ import { lireSession } from "../../lib/session";
 import { trouverParId, listerEnAttente, listerMedias } from "../../lib/db";
 import { estAdmin } from "../../lib/admin";
 import DecisionAdmin from "../../components/DecisionAdmin";
+import VagueMatching from "../../components/VagueMatching";
 
 export const metadata = { title: "Administration — IRISIA" };
 export const dynamic = "force-dynamic";
@@ -39,6 +40,7 @@ export default async function Admin() {
           Pour chaque dossier : comparez le visage de la vidéo aux photos, et vérifiez que
           le geste demandé est bien exécuté. Au moindre doute, refusez — le membre pourra recommencer.
         </p>
+        <VagueMatching />
 
         {dossiers.length === 0 && (
           <p className="chat-info">Aucun dossier en attente. ☕</p>
