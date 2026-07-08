@@ -54,20 +54,29 @@ export default async function Espace() {
             <span className="etat ok">Fait</span>
           </div>
 
-          <div className="jalon">
-            <span className="pastille">2</span>
+          <div className={"jalon" + (verif === "VERIFIE" ? " fait" : "")}>
+            <span className="pastille">{verif === "VERIFIE" ? "✓" : "2"}</span>
             <div>
               <h3>Vérification photo &amp; vidéo</h3>
               <p>
                 {verif === "VERIFIE"
                   ? "Votre profil est vérifié. Merci de contribuer à une communauté sans faux profils."
                   : verif === "EN_ATTENTE"
-                  ? "Vos éléments sont en cours de vérification par notre équipe."
-                  : "Bientôt disponible — vous serez prévenu par e-mail dès l'ouverture."}
+                  ? "Vos éléments sont en cours d'examen par notre équipe — vous serez prévenu très vite."
+                  : verif === "REFUSE"
+                  ? "Votre dossier n'a pas pu être validé — recommencez quand vous voulez."
+                  : "Quelques photos et un selfie vidéo de 5 secondes : la garantie d'une communauté 100 % réelle."}
               </p>
+              {(verif === "NON_VERIFIE" || verif === "REFUSE") && (
+                <p style={{ marginTop: "14px" }}>
+                  <Link className="bouton" href="/verification">
+                    {verif === "REFUSE" ? "Recommencer la vérification" : "Commencer la vérification"}
+                  </Link>
+                </p>
+              )}
             </div>
-            <span className={"etat " + (verif === "VERIFIE" ? "ok" : verif === "EN_ATTENTE" ? "attente" : "bientot")}>
-              {verif === "VERIFIE" ? "Fait" : verif === "EN_ATTENTE" ? "En cours" : "Bientôt"}
+            <span className={"etat " + (verif === "VERIFIE" ? "ok" : verif === "EN_ATTENTE" ? "attente" : verif === "REFUSE" ? "attente" : "attente")}>
+              {verif === "VERIFIE" ? "Fait" : verif === "EN_ATTENTE" ? "En cours" : verif === "REFUSE" ? "À refaire" : "À faire"}
             </span>
           </div>
 
