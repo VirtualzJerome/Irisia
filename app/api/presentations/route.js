@@ -20,6 +20,18 @@ function age(d) {
   return x;
 }
 
+function pointsCommuns(moi, autre) {
+  const communs = [];
+  const passions = (moi.passions || []).filter((x) => (autre.passions || []).includes(x));
+  for (const x of passions) communs.push(x);
+  if (moi.ville && autre.ville && moi.ville.trim().toLowerCase() === autre.ville.trim().toLowerCase())
+    communs.push("Même ville");
+  if (moi.souhait_enfants && moi.souhait_enfants === autre.souhait_enfants)
+    communs.push("Même vision famille");
+  if (moi.tabac === "non" && autre.tabac === "non") communs.push("Non-fumeurs");
+  return communs;
+}
+
 async function vue(pres, moi) {
   const suisA = pres.membre_a === moi.id;
   const autreId = suisA ? pres.membre_b : pres.membre_a;
@@ -38,6 +50,8 @@ async function vue(pres, moi) {
     mutuelle: maReponse === "ACCEPTE" && saReponse === "ACCEPTE",
     brise_glace: pres.brise_glace || null,
     profil: profilPublicDe(autre),
+    son_mot: saReponse === "ACCEPTE" ? (suisA ? pres.mot_b : pres.mot_a) : null,
+    communs: pointsCommuns(profilPublicDe(moi), profilPublicDe(autre)),
   };
 }
 
@@ -58,7 +72,7 @@ export async function GET() {
     let pres = await presentationActivePour(moi.id);
 
     // Pas de présentation ? On tente une recherche (avec délai anti-rafale)
-    if (!pres) {
+    if (!pres && !moi.en_pause) {
       const derniere = moi.derniere_recherche ? new Date(moi.derniere_recherche).getTime() : 0;
       if (Date.now() - derniere > DELAI_RECHERCHE_MS) {
         try {
@@ -70,7 +84,7 @@ export async function GET() {
       }
     }
 
-    if (!pres) return NextResponse.json({ pret: true, presentation: null });
+    if (!pres) return NextResponse.json({ pret: true, presentation: null, en_pause: !!moi.en_pause });
     return NextResponse.json({ pret: true, presentation: await vue(pres, moi) });
   } catch (e) {
     console.error("Erreur GET presentations:", e);
@@ -87,14 +101,14 @@ export async function POST(req) {
     if (moi.banni)
       return NextResponse.json({ erreur: "Ce compte a été suspendu." }, { status: 403 });
 
-    const { action, reponse, motif } = await req.json();
+    const { action, reponse, motif, mot } = await req.json();
     if (action !== "repondre" || !["ACCEPTE", "DECLINE"].includes(reponse))
       return NextResponse.json({ erreur: "Requête invalide." }, { status: 400 });
 
     const pres = await presentationActivePour(moi.id);
     if (!pres) return NextResponse.json({ erreur: "Aucune présentation en cours." }, { status: 400 });
 
-    const maj = await repondrePresentation(pres.id, moi.id, reponse, (motif || "").slice(0, 500));
+    const maj = await repondrePresentation(pres.id, moi.id, reponse, (motif || "").slice(0, 500), (mot || "").trim().slice(0, 200) || null);
 
     // Si les deux viennent de dire oui : la bonne nouvelle part aux deux
     if (maj && maj.reponse_a === "ACCEPTE" && maj.reponse_b === "ACCEPTE") {

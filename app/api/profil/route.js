@@ -28,6 +28,7 @@ export async function GET() {
     return NextResponse.json({
       prenom: u.prenom,
       entretien_termine: u.entretien_termine,
+      en_pause: !!u.en_pause,
       profil,
       photos,
       completude: calculerCompletude(profil, photos.length),
@@ -94,6 +95,11 @@ export async function POST(req) {
       maj.reponses_prompts = liste.map((r) => ({ question: r.question, reponse: r.reponse.trim() }));
     }
     if ("bio" in corps) maj.bio = (corps.bio || "").trim().slice(0, 300) || null;
+    if ("en_pause" in corps) {
+      if (typeof corps.en_pause !== "boolean")
+        return NextResponse.json({ erreur: "Valeur de pause invalide." }, { status: 400 });
+      maj.en_pause = corps.en_pause;
+    }
     if ("couleur_accent" in corps) {
       if (corps.couleur_accent && !COULEURS[corps.couleur_accent])
         return NextResponse.json({ erreur: "Couleur inconnue." }, { status: 400 });
@@ -105,7 +111,7 @@ export async function POST(req) {
     const profil = profilPublicDe(apres);
     const medias = await listerMedias(u.id);
     const photos = medias.filter((m) => m.type === "photo").map((m) => m.id);
-    return NextResponse.json({ ok: true, profil, completude: calculerCompletude(profil, photos.length) });
+    return NextResponse.json({ ok: true, profil, en_pause: !!apres.en_pause, completude: calculerCompletude(profil, photos.length) });
   } catch (e) {
     console.error("Erreur POST profil:", e);
     return NextResponse.json({ erreur: "Une erreur est survenue." }, { status: 500 });

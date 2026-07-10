@@ -537,3 +537,22 @@ footer.site{
 }
 .pres-prompt .q{ font-size:.76rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--brume); margin-bottom:5px; }
 .pres-prompt .r{ font-size:.98rem; }
+
+/* ── v0.9 : l'âme ──────────────────────────── */
+.jalon.confidence{ border-color:rgba(216,180,92,.35); }
+.pres-communs{ margin:14px 0; }
+.pres-communs .q{ font-size:.76rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--lueur); margin-bottom:8px; }
+.pres-mot.petit-mot{ background:#FBF3E2; }
+.champ-petit-mot{
+  width:100%; background:var(--nuit); color:var(--petale);
+  border:1px solid var(--nuit-3); border-radius:12px;
+  padding:12px 14px; font:inherit; font-size:.95rem; margin-bottom:12px;
+}
+.champ-petit-mot:focus{ outline:2px solid var(--accent, var(--iris)); outline-offset:2px; }
+.barre-coach{ display:flex; justify-content:center; padding:6px 0 2px; }
+.conseil-prive{
+  margin:0 4px 8px; padding:14px 18px;
+  background:rgba(216,180,92,.08); border:1px solid rgba(216,180,92,.35);
+  border-radius:14px; font-size:.95rem;
+}
+.conseil-titre{ font-size:.76rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--lueur); margin-bottom:6px; }

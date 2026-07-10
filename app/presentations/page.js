@@ -14,6 +14,9 @@ export default function Presentations() {
   const [occupe, setOccupe] = useState(false);
   const [declinEnCours, setDeclinEnCours] = useState(false);
   const [motif, setMotif] = useState("");
+  const [motAvecOui, setMotAvecOui] = useState("");
+  const [conseil, setConseil] = useState("");
+  const [coachEnCours, setCoachEnCours] = useState(false);
   const [erreur, setErreur] = useState("");
 
   // ── Conversation ──
@@ -69,7 +72,7 @@ export default function Presentations() {
       const rep = await fetch("/api/presentations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "repondre", reponse, motif: motif.trim() }),
+        body: JSON.stringify({ action: "repondre", reponse, motif: motif.trim(), mot: motAvecOui.trim() }),
       });
       const json = await rep.json();
       if (!rep.ok) setErreur(json.erreur || "Une erreur est survenue.");
@@ -84,6 +87,19 @@ export default function Presentations() {
       setErreur("Une erreur est survenue. Réessayez.");
     } finally {
       setOccupe(false);
+    }
+  }
+
+  async function demanderConseil() {
+    setCoachEnCours(true);
+    try {
+      const rep = await fetch("/api/presentations/coach", { method: "POST" });
+      const json = await rep.json();
+      setConseil(rep.ok ? json.conseil : json.erreur || "Irisia est momentanément indisponible.");
+    } catch {
+      setConseil("Irisia est momentanément indisponible.");
+    } finally {
+      setCoachEnCours(false);
     }
   }
 
@@ -154,12 +170,11 @@ export default function Presentations() {
       <div className="chat-page"><Entete statut="Vos présentations" />
         <main className="chat-fil">
           <div className="chat-fin">
-            <p className="recherche-titre">🌿 Irisia cherche pour vous.</p>
+            <p className="recherche-titre">{donnees.en_pause ? "⏸️ Votre profil est en pause." : "🌿 Irisia cherche pour vous."}</p>
             <p>
-              Votre profil est complet — Irisia examine les membres vérifiés et ne vous
-              présentera quelqu&apos;un que lorsqu&apos;elle y croira vraiment. C&apos;est
-              sa promesse : jamais de catalogue, jamais de présentation médiocre.
-              Vous verrez la présentation apparaître ici même.
+              {donnees.en_pause
+                ? "Irisia respecte vos saisons : elle ne cherche pas tant que la pause est active. Réactivez-la depuis votre profil quand le cœur vous en dira."
+                : "Votre profil est complet — Irisia examine les membres vérifiés et ne vous présentera quelqu'un que lorsqu'elle y croira vraiment. C'est sa promesse : jamais de catalogue, jamais de présentation médiocre. Vous verrez la présentation apparaître ici même."}
             </p>
             <Link className="bouton" href="/espace">Retour à mon espace</Link>
           </div>
@@ -184,6 +199,12 @@ export default function Presentations() {
               </p>
             )}
           </div>
+          {pres.son_mot && (
+            <div className="bulle irisia">
+              <span className="bulle-nom">Le mot de {pres.prenom}</span>
+              <p>&laquo;&nbsp;{pres.son_mot}&nbsp;&raquo;</p>
+            </div>
+          )}
           {messages.map((m) => (
             <div key={m.id} className={"bulle " + (m.de_moi ? "moi" : "irisia")}>
               {!m.de_moi && <span className="bulle-nom">{pres.prenom}</span>}
@@ -193,6 +214,18 @@ export default function Presentations() {
           <SignalerMembre prenom={pres.prenom} />
           <div ref={finListe} />
         </main>
+        {conseil && (
+          <div className="conseil-prive" role="status">
+            <p className="conseil-titre">🌿 Le conseil d&apos;Irisia — visible par vous seul·e</p>
+            <p>{conseil}</p>
+            <button type="button" className="lien-discret" onClick={() => setConseil("")}>Fermer</button>
+          </div>
+        )}
+        <div className="barre-coach">
+          <button type="button" className="lien-discret" onClick={demanderConseil} disabled={coachEnCours}>
+            {coachEnCours ? "Irisia relit votre conversation…" : "🌿 Demander conseil à Irisia"}
+          </button>
+        </div>
         <form className="chat-saisie" onSubmit={envoyerMessage}>
           <input
             type="text" value={saisie} onChange={(e) => setSaisie(e.target.value)}
@@ -228,6 +261,24 @@ export default function Presentations() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img key={id} src={"/api/media/" + id} alt={"Photo de " + pres.prenom} />
               ))}
+            </div>
+          )}
+
+          {(pres.communs || []).length > 0 && (
+            <div className="pres-communs">
+              <p className="q">✨ Vos points communs</p>
+              <div className="pres-pastilles">
+                {pres.communs.map((x) => (
+                  <span className="pastille-passion" key={x} style={{ borderColor: "var(--accent)" }}>{x}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {pres.son_mot && (
+            <div className="pres-mot petit-mot">
+              <p className="de">{pres.prenom} a dit oui — et vous laisse ce mot</p>
+              <p className="texte">&laquo;&nbsp;{pres.son_mot}&nbsp;&raquo;</p>
             </div>
           )}
 
@@ -281,6 +332,13 @@ export default function Presentations() {
               </div>
             </div>
           ) : (
+            <div className="pres-accepter">
+              <input
+                type="text" maxLength={200} value={motAvecOui}
+                onChange={(e) => setMotAvecOui(e.target.value)}
+                placeholder={"Un petit mot avec votre oui ? (optionnel)"}
+                className="champ-petit-mot"
+              />
             <div className="pres-boutons">
               <button className="bouton" onClick={() => repondre("ACCEPTE")} disabled={occupe}>
                 🌿 Rencontrer {pres.prenom}
@@ -288,6 +346,7 @@ export default function Presentations() {
               <button className="bouton refus" onClick={() => setDeclinEnCours(true)} disabled={occupe}>
                 Décliner
               </button>
+            </div>
             </div>
           )}
           <SignalerMembre prenom={pres.prenom} />

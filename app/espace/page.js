@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { lireSession } from "../../lib/session";
 import { trouverParId, presentationActivePour, notificationsPour, listerMedias, profilPublicDe } from "../../lib/db";
 import BoutonDeconnexion from "../../components/BoutonDeconnexion";
+import ConfidenceDuJour from "../../components/ConfidenceDuJour";
 import { estAdmin } from "../../lib/admin";
 import { calculerCompletude } from "../../lib/options-profil";
 
@@ -134,6 +135,8 @@ export default async function Espace() {
             </span>
           </div>
         </div>
+
+        {utilisateur.entretien_termine && <ConfidenceDuJour />}
 
         {completude < 100 && (
           <div className="parcours" style={{ marginTop: "18px" }}>

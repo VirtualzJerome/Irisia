@@ -21,6 +21,7 @@ export default function Profil() {
   const [occupe, setOccupe] = useState(false);
   const [bioEnCours, setBioEnCours] = useState(false);
   const [apercu, setApercu] = useState(false);
+  const [enPause, setEnPause] = useState(false);
   const fichierRef = useRef(null);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function Profil() {
       setPhotos(json.photos);
       setP(json.profil);
       setCompletude(json.completude);
+      setEnPause(!!json.en_pause);
     })().catch(() => setErreur("Impossible de charger votre profil. Rechargez la page."));
   }, [router]);
 
@@ -304,6 +306,28 @@ export default function Profil() {
                 onClick={() => champ("couleur_accent", nom)} />
             ))}
           </div>
+        </section>
+
+        <section className="bloc-profil">
+          <h2>Le mode pause</h2>
+          <p className="aide-section">
+            La vie a ses saisons. En pause, Irisia arrête de chercher pour vous — vos
+            conversations en cours restent ouvertes, et rien n&apos;est perdu.
+          </p>
+          <button type="button"
+            className={"bouton" + (enPause ? "" : " refus")}
+            onClick={async () => {
+              const rep = await fetch("/api/profil", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ en_pause: !enPause }),
+              });
+              const json = await rep.json();
+              if (rep.ok) setEnPause(!!json.en_pause);
+            }}>
+            {enPause ? "▶️ Réactiver mon profil" : "⏸️ Mettre mon profil en pause"}
+          </button>
+          {enPause && <p className="aide-section" style={{ marginTop: "10px" }}>Profil en pause — Irisia ne cherche pas.</p>}
         </section>
 
         <div className="barre-actions">
